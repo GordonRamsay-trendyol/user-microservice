@@ -23,35 +23,26 @@ public class UserController {
 
     @PostMapping(path = "/add")
     public Result createUser (@Valid @RequestBody User user){
-        try{
-            User createdUser = userService.addUser(user);
-            return  new DataResult<>(createdUser, true, "User Created");
-        }catch(UserException e){
-            return new Result(e.getMessage(), false );
-        }
-
+        User createdUser = userService.addUser(user);
+        return  new DataResult<>(createdUser, true, "User Created");
     }
 
     @PutMapping(path = "/update")
     public Result updateUser (@Valid @RequestBody User user){
-        try{
-            User updatedUser = userService.updateUser(user);
-            return new DataResult<>(updatedUser, true, "User Updated");
-        }
-        catch (UserException e){
-            return new Result(e.getMessage(), false);
-        }
+        User updatedUser = userService.updateUser(user);
+        return new DataResult<>(updatedUser, true, "User Updated");
 
     }
 
-    @DeleteMapping(path = "/delete/user")
+    @PutMapping(path = "/update/name")
+    public Result updateUserName (@Valid @RequestBody User user){
+        User updatedUser = userService.updateUserName(user);
+        return new DataResult<>(updatedUser, true, "User Updated");
+    }
+
+    @DeleteMapping(path = "/delete") // /delete/{id} deleteUserById
     public Result deleteUser (@RequestBody User user){
-        try{
-            userService.deleteUser(user);
-            return new Result("User Deleted", true);
-        }
-        catch (UserException e){
-            return new Result(e.getMessage(), false);
-        }
+        userService.deleteUser(user);
+        return new Result("User Deleted", true);
     }
 }

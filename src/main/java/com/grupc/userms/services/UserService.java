@@ -1,9 +1,13 @@
 package com.grupc.userms.services;
 
 import com.grupc.userms.entities.User;
+import com.grupc.userms.exception.EmptyInputException;
+import com.grupc.userms.exception.UniqueFieldException;
 import com.grupc.userms.exception.UserException;
+import com.grupc.userms.exception.UserNotFoundException;
 import com.grupc.userms.repositories.UserRepository;
 import com.sun.istack.NotNull;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +23,11 @@ public class UserService {
     }
 
     public User addUser (User user) throws UserException {
-        if (user.getEMail() == null || user.getFullName() == null) {
-            throw new UserException("Fields cannot be null");
+        if (StringUtils.isBlank(user.getEMail()) || StringUtils.isBlank(user.getFullName())) {
+            throw new EmptyInputException();
         }
         if( !isEMailUnique(user.getEMail())){
-            throw new UserException("e-mail must be unique");
+            throw new UniqueFieldException();
         }
         User createdUser = new User(user.getFullName(), user.getEMail());
         return userRepository.save(createdUser);
@@ -35,33 +39,47 @@ public class UserService {
             userRepository.delete(user);
             return;
         }
-        throw new UserException("User cannot be found");
-
+        throw new UserNotFoundException();
     }
 
     public User updateUser (User user) throws UserException{
+        User updatedUser = getUserById(user.getId());
 
-        Optional<User> optionalUpdatedUser = userRepository.findById(user.getId());
-        if (optionalUpdatedUser.isEmpty()){
-            throw new UserException("id cannot be null");
-        }
-        User updatedUser = optionalUpdatedUser.get();
-        if (user.getEMail() != null){
+        if (StringUtils.isNotBlank(user.getEMail())){
             if( !isEMailUnique(user.getEMail())){
-                throw new UserException("e-mail must be unique");
+                throw new UniqueFieldException();
             }
             updatedUser.setEMail(user.getEMail());
         }
-        if (user.getFullName() != null){
+
+        if (StringUtils.isNotBlank(user.getFullName())){
             updatedUser.setFullName(user.getFullName());
         }
 
         return userRepository.save(updatedUser);
     }
 
+    public User updateUserName (User user){
+
+       User updatedUser = getUserById(user.getId()) ;
+
+       if (StringUtils.isNotBlank(user.getFullName())){
+           updatedUser.setFullName(user.getFullName());
+           return userRepository.save(updatedUser);
+       }
+       throw new EmptyInputException();
+    }
+
+    public User getUserById(Long id) throws EmptyInputException{
+        Optional<User> optionalUser = userRepository.findById(id); //
+        if (optionalUser.isEmpty()){
+            throw new EmptyInputException();
+        }
+        return optionalUser.get();
+    }
+
     public Boolean isEMailUnique (@NotNull String eMail) {
         Optional<User> user = userRepository.findByeMail(eMail);
         return user.isEmpty();
     }
-
 }
