@@ -1,4 +1,4 @@
-package com.grupc.userms.util;
+package com.grupc.userms.model.response;
 
 public class Result {
     private String message;

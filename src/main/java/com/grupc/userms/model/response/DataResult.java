@@ -1,4 +1,4 @@
-package com.grupc.userms.util;
+package com.grupc.userms.model.response;
 
 public class DataResult<T> extends Result {
     private T data;
