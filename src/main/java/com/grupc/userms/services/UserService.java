@@ -85,6 +85,8 @@ public class UserService {
         return optionalUser.get();
     }
 
+
+
     public Boolean isEMailUnique (@NotNull String eMail) {
         Optional<User> user = userRepository.findByeMail(eMail);
         return user.isEmpty();

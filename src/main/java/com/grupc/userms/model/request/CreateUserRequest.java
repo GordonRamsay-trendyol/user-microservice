@@ -7,6 +7,10 @@ public class CreateUserRequest {
     String fullName;
     private @NotNull String email;
 
+    public CreateUserRequest (){
+
+    }
+
     public String getFullName() {
         return fullName;
     }
