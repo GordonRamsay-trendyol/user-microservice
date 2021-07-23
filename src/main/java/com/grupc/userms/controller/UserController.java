@@ -1,13 +1,11 @@
 package com.grupc.userms.controller;
 
 import com.grupc.userms.entities.User;
-import com.grupc.userms.model.request.CreateUserRequest;
-import com.grupc.userms.model.request.UpdateUserRequest;
+import com.grupc.userms.dto.request.CreateUserRequest;
+import com.grupc.userms.dto.request.UpdateUserRequest;
 import com.grupc.userms.services.UserService;
-import com.grupc.userms.model.response.DataResult;
-import com.grupc.userms.model.response.Result;
-import org.hibernate.sql.Update;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.grupc.userms.dto.response.DataResult;
+import com.grupc.userms.dto.response.Result;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,7 +16,6 @@ import javax.validation.Valid;
 public class UserController {
     private final UserService userService;
 
-    @Autowired
     public UserController(UserService userService){
         this.userService = userService;
     }

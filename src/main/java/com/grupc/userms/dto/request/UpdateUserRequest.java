@@ -1,14 +1,19 @@
-package com.grupc.userms.model.request;
+package com.grupc.userms.dto.request;
 
 import com.sun.istack.NotNull;
 
-public class CreateUserRequest {
+public class UpdateUserRequest {
     private @NotNull
-    String fullName;
+    Long id;
+    private @NotNull String fullName;
     private @NotNull String email;
 
-    public CreateUserRequest (){
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFullName() {
@@ -26,5 +31,4 @@ public class CreateUserRequest {
     public void setEmail(String email) {
         this.email = email;
     }
-
 }

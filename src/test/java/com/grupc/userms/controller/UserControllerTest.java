@@ -18,8 +18,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @WebMvcTest(controllers = UserController.class)
 @ActiveProfiles("test")
 class UserControllerTest {
@@ -62,7 +60,7 @@ class UserControllerTest {
 
 
     @Test
-    void deleteUser() throws Exception { // ??? returns 400 expected 200 OK
+    void deleteUser() throws Exception {
         Long userId = 1L;
         User user = new User(userId, "testUser", "test@testmail.com");
         Mockito.when(userService.getUserById(userId)).thenReturn(user);
@@ -71,7 +69,7 @@ class UserControllerTest {
         this.mockMvc.perform(delete("/users", user))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.fullName", is(user.getFullName())))
-                .andExpect(jsonPath("$.email", is(user.getEMail())));
+                .andExpect(jsonPath("$.email", is(user.getEmail())));
 
     }
 }

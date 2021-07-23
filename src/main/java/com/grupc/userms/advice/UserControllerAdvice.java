@@ -34,7 +34,7 @@ public class UserControllerAdvice {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<String> handleHttpMessageNotReadable(HttpMessageNotReadableException httpMessageNotReadableException){
-        return new ResponseEntity<String> ("No content to map due to end-of-input",HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No content to map due to end-of-input");
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

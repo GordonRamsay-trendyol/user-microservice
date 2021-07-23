@@ -17,21 +17,21 @@ public class User {
 
     @Column(unique = true)
     @NotNull
-    private String eMail;
+    private String email;
 
     public User(){
 
     }
 
-    public User(String fullName, @NotNull String eMail){
+    public User(String fullName, @NotNull String email){
         this.fullName = fullName;
-        this.eMail = eMail;
+        this.email = email;
     }
 
     public User(Long id, String fullName, String email){
         this.id = id;
         this.fullName = fullName;
-        this.eMail = email;
+        this.email = email;
     }
 
     public Long getId() {
@@ -50,11 +50,11 @@ public class User {
         this.fullName = fullName;
     }
 
-    public String getEMail() {
-        return eMail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public void setEMail(String eMail) {
-        this.eMail = eMail;
+    public String getEmail() {
+        return email;
     }
 }

@@ -5,8 +5,8 @@ import com.grupc.userms.exception.EmptyInputException;
 import com.grupc.userms.exception.UniqueFieldException;
 import com.grupc.userms.exception.UserException;
 import com.grupc.userms.exception.UserNotFoundException;
-import com.grupc.userms.model.request.CreateUserRequest;
-import com.grupc.userms.model.request.UpdateUserRequest;
+import com.grupc.userms.dto.request.CreateUserRequest;
+import com.grupc.userms.dto.request.UpdateUserRequest;
 import com.grupc.userms.repositories.UserRepository;
 import com.sun.istack.NotNull;
 import org.apache.commons.lang3.StringUtils;
@@ -21,74 +21,69 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserService (UserRepository userRepository){
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public User addUser (CreateUserRequest request) throws UserException {
+    public User addUser(CreateUserRequest request) throws UserException {
         if (StringUtils.isBlank(request.getEmail()) || StringUtils.isBlank(request.getFullName())) {
             throw new EmptyInputException();
         }
-        if( !isEMailUnique(request.getEmail())){
-            throw new UniqueFieldException();
-        }
+        checkEmailUnique(request.getEmail());
+
         User createdUser = new User(request.getFullName(), request.getEmail());
         return userRepository.save(createdUser);
     }
 
-    public void deleteUser (User user) throws  UserException{
+    public void deleteUser(User user) throws UserException {
         User userToDelete = getUserById(user.getId());
-        if(userToDelete!=null){
+        if (userToDelete != null) {
             userRepository.delete(user);
             return;
         }
         throw new UserNotFoundException();
     }
 
-    public User updateUser (UpdateUserRequest request) throws UserException{
+    public User updateUser(UpdateUserRequest request) throws UserException {
         User updatedUser = getUserById(request.getId());
 
-        if (StringUtils.isNotBlank(request.getEmail())){
-            if( !isEMailUnique(request.getEmail())){
-                throw new UniqueFieldException();
-            }
-            updatedUser.setEMail(request.getEmail());
+        String email = request.getEmail();
+
+        if (StringUtils.isNotBlank(email)) {
+            checkEmailUnique(email);
+            updatedUser.setEmail(email);
         }
 
-        if (StringUtils.isNotBlank(request.getFullName())){
+        if (StringUtils.isNotBlank(request.getFullName())) {
             updatedUser.setFullName(request.getFullName());
         }
 
         return userRepository.save(updatedUser);
     }
 
-    public User updateUserName (UpdateUserRequest request){
+    public User updateUserName(UpdateUserRequest request) {
 
-       User updatedUser = getUserById(request.getId()) ;
+        User updatedUser = getUserById(request.getId());
+        if (StringUtils.isBlank(request.getFullName())) {
+            throw new EmptyInputException();
+        }
 
-       if (StringUtils.isNotBlank(request.getFullName())){
-           updatedUser.setFullName(request.getFullName());
-           return userRepository.save(updatedUser);
-       }
-       throw new EmptyInputException();
+        updatedUser.setFullName(request.getFullName());
+        return userRepository.save(updatedUser);
     }
 
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public User getUserById(Long id) throws EmptyInputException{
-        Optional<User> optionalUser = userRepository.findById(id); //
-        if (optionalUser.isEmpty()){
-            throw new EmptyInputException();
-        }
-        return optionalUser.get();
+    public User getUserById(Long id) throws EmptyInputException {
+        return userRepository.findById(id).orElseThrow(EmptyInputException::new);
     }
 
-
-
-    public Boolean isEMailUnique (@NotNull String eMail) {
-        Optional<User> user = userRepository.findByeMail(eMail);
-        return user.isEmpty();
+    public void checkEmailUnique(@NotNull String email) throws UniqueFieldException {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isPresent()) {
+            throw new UniqueFieldException();
+        }
     }
 }

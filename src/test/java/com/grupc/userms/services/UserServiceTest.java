@@ -3,11 +3,9 @@ package com.grupc.userms.services;
 import com.grupc.userms.entities.User;
 import com.grupc.userms.exception.EmptyInputException;
 
-import com.grupc.userms.exception.UserNotFoundException;
-import com.grupc.userms.model.request.CreateUserRequest;
-import com.grupc.userms.model.request.UpdateUserRequest;
+import com.grupc.userms.dto.request.CreateUserRequest;
+import com.grupc.userms.dto.request.UpdateUserRequest;
 import com.grupc.userms.repositories.UserRepository;
-import net.bytebuddy.pool.TypePool;
 import org.junit.Before;
 import org.junit.jupiter.api.extension.ExtendWith;
 
