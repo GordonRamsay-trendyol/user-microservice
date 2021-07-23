@@ -37,8 +37,8 @@ public class UserService {
     }
 
     public void deleteUser (User user) throws  UserException{
-        Optional<User> userToDelete =  userRepository.findById(user.getId());
-        if(userToDelete.isPresent()){
+        User userToDelete = getUserById(user.getId());
+        if(userToDelete!=null){
             userRepository.delete(user);
             return;
         }

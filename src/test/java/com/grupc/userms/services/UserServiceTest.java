@@ -7,6 +7,7 @@ import com.grupc.userms.exception.UserNotFoundException;
 import com.grupc.userms.model.request.CreateUserRequest;
 import com.grupc.userms.model.request.UpdateUserRequest;
 import com.grupc.userms.repositories.UserRepository;
+import net.bytebuddy.pool.TypePool;
 import org.junit.Before;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -26,6 +27,10 @@ import static org.mockito.ArgumentMatchers.eq;
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
+    private static final Long ID = 1L;
+    private static final String FULL_NAME = "testUser";
+    private static final String EMAIL = "test@testmail.com";
+
     @Before
     public void createMocks()
     {
@@ -40,10 +45,10 @@ class UserServiceTest {
 
     @Test
     void addUser_validRequestGiven_returnUser() {
-        User createdUser = new User(1L,"test@testmail.com", "testUser");
+        User createdUser = new User(ID,FULL_NAME,EMAIL);
         CreateUserRequest request = new CreateUserRequest();
-        request.setFullName("testUser");
-        request.setEmail("test@hotmail.com");
+        request.setFullName(FULL_NAME);
+        request.setEmail(EMAIL);
 
         Mockito.when(userRepository.save(any())).thenReturn(createdUser);
 
@@ -56,7 +61,7 @@ class UserServiceTest {
     @Test
     void addUser_notValidRequestGiven_returnError(){
         CreateUserRequest request = new CreateUserRequest();
-        request.setFullName("testUser");
+        request.setFullName(FULL_NAME);
 
         Exception exception = assertThrows(EmptyInputException.class, () -> userService.addUser(request));
         assertEquals(EmptyInputException.class, exception.getClass());
@@ -65,7 +70,7 @@ class UserServiceTest {
 
     @Test
     void deleteUser_validUserGiven_checkUserRepoDeleteAccessedAtLeastOneTime() {
-        User createdUser = new User(1L,"test@testmail.com", "testUser");
+        User createdUser = new User(ID,FULL_NAME,EMAIL);
         Mockito.when(userRepository.findById(any())).thenReturn(java.util.Optional.of(createdUser));
         userService.deleteUser(createdUser);
         Mockito.verify(userRepository,Mockito.times(1)).delete(eq(createdUser));
@@ -73,42 +78,42 @@ class UserServiceTest {
 
     @Test
     void deleteUser_notValidUserGiven_ReturnError(){
-        User createdUser = new User(1L,"test@testmail.com", "testUser");
-        Exception exception = assertThrows(UserNotFoundException.class, ()-> userService.deleteUser(createdUser));
-        assertEquals(UserNotFoundException.class,exception.getClass());
+        User createdUser = new User(ID,FULL_NAME,EMAIL);
+        Exception exception = assertThrows(EmptyInputException.class, ()-> userService.deleteUser(createdUser));
+        assertEquals(EmptyInputException.class,exception.getClass());
     }
 
     @Test
     void updateUser_validInputGiven_ExpectSuccess() {
         UpdateUserRequest request = new UpdateUserRequest();
-        request.setId(1L);
-        request.setEmail("test@testmail.com");
-        request.setFullName("testUser");
-        User user = new User(1L,"test@testmail.com", "test");
+        request.setId(ID);
+        request.setEmail(EMAIL);
+        request.setFullName(FULL_NAME);
+        User user = new User(ID,FULL_NAME,EMAIL);
         Mockito.when(userRepository.findById(any())).thenReturn(java.util.Optional.of(user));
         Mockito.when(userRepository.save(any())).thenReturn(user);
         User updatedUser = userService.updateUser(request);
-        assertEquals("testUser",updatedUser.getFullName());
+        assertEquals(FULL_NAME,updatedUser.getFullName());
     }
 
     @Test
     void updateUserName() {
         UpdateUserRequest request = new UpdateUserRequest();
-        request.setId(1L);
-        request.setFullName("testUser");
-        User user = new User(1L,"test@testmail.com", "user");
+        request.setId(ID);
+        request.setFullName(FULL_NAME);
+        User user = new User(ID,FULL_NAME,EMAIL);
         Mockito.when(userRepository.findById(any())).thenReturn(java.util.Optional.of(user));
         Mockito.when(userRepository.save(any())).thenReturn(user);
         User updatedUser = userService.updateUserName(request);
-        assertEquals("testUser",updatedUser.getFullName());
+        assertEquals(FULL_NAME,updatedUser.getFullName());
     }
 
     @Test
     void updateUser_NotValidUserIdGiven(){
         UpdateUserRequest request = new UpdateUserRequest();
-        request.setId(1L);
-        request.setEmail("test@testmail.com");
-        request.setFullName("testUser");
+        request.setId(ID);
+        request.setEmail(EMAIL);
+        request.setFullName(FULL_NAME);
 
         Exception exception = assertThrows(EmptyInputException.class,()->userService.updateUser(request));
         assertEquals(EmptyInputException.class, exception.getClass());
@@ -116,15 +121,15 @@ class UserServiceTest {
 
     @Test
     void getUserById_ValidIdGiven_ShouldReturnUser() {
-        User createdUser = new User(1L,"test@testmail.com", "testUser");
-        Mockito.when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(createdUser));
+        User createdUser = new User(ID,FULL_NAME,EMAIL);
+        Mockito.when(userRepository.findById(any())).thenReturn(java.util.Optional.of(createdUser));
         User foundUser = userService.getUserById(createdUser.getId());
         assertEquals(createdUser,foundUser);
     }
 
    @Test
    void getUserById_NotValidIdGiven_ShouldShowErrorMessage (){
-        Throwable throwable = assertThrows(Throwable.class, () -> userService.getUserById(1L));
+        Throwable throwable = assertThrows(Throwable.class, () -> userService.getUserById(ID));
         assertEquals(EmptyInputException.class,throwable.getClass());
    }
 
