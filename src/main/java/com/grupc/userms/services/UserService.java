@@ -29,7 +29,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    @Autowired
+
     public UserService(UserRepository userRepository, KafkaTemplate<String, String> kafkaTemplate) {
         this.userRepository = userRepository;
         this.kafkaTemplate = kafkaTemplate;
