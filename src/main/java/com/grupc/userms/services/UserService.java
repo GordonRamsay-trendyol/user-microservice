@@ -42,8 +42,9 @@ public class UserService {
         checkEmailUnique(request.getEmail());
 
         User createdUser = new User(request.getFullName(), request.getEmail());
+        createdUser = userRepository.save(createdUser);
         kafkaTemplate.send(CREATE_TOPIC, JSON.toJSONString(createdUser, false));
-        return userRepository.save(createdUser);
+        return createdUser;
     }
 
     public void deleteUser(User user) throws UserException {
@@ -69,8 +70,9 @@ public class UserService {
         if (StringUtils.isNotBlank(request.getFullName())) {
             updatedUser.setFullName(request.getFullName());
         }
+        updatedUser = userRepository.save(updatedUser);
         kafkaTemplate.send(UPDATE_TOPIC, JSON.toJSONString(updatedUser, false));
-        return userRepository.save(updatedUser);
+        return updatedUser;
     }
 
     public User updateUserName(UpdateUserRequest request) {
@@ -81,8 +83,9 @@ public class UserService {
         }
 
         updatedUser.setFullName(request.getFullName());
+        updatedUser = userRepository.save(updatedUser);
         kafkaTemplate.send(UPDATE_TOPIC, JSON.toJSONString(updatedUser, false));
-        return userRepository.save(updatedUser);
+        return updatedUser;
     }
 
     public List<User> getAllUsers() {
